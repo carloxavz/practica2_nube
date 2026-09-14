@@ -6,7 +6,7 @@ terraform {
     }
   }
   backend "gcs" {
-    bucket = "tfstate-<ID-DEL-PROYECTO>"
+    bucket = "tfstate-nube-2026-ii"
     prefix = "practica-2"
   }
 }
