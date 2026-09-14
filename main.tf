@@ -43,4 +43,6 @@ resource "google_compute_instance" "web" {
   }
 
   metadata_startup_script = file("arranque.sh")
+
+  allow_stopping_for_update = true
 }
