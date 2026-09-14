@@ -66,6 +66,8 @@ Untracked files:
 nothing added to commit but untracked files present (use "git add" to track)
 ```
 
+![Creación inicial con Terraform](evidencias/01-creacion-inicial.png)
+
 Commit de esta fase: `Máquina y regla de cortafuegos en Terraform`.
 
 ### Fase 2 — Salida con la IP y verificación de la página propia
@@ -76,6 +78,9 @@ carlosantonioav@cloudshell:~/practica2_nube (nube-2026-ii)$ terraform output ip_
 carlosantonioav@cloudshell:~/practica2_nube (nube-2026-ii)$ curl -m 8 http://$(terraform output -raw ip_externa)
 <h1><HOLA MUNDO DICEN CAR Y JD></h1><p>Servida desde Terraform por web-tf</p>
 ```
+
+![Salida ip_externa y primer commit](evidencias/02-salida-ip.png)
+![Verificación con curl](evidencias/02-verificacion-curl.png)
 
 Commit de esta fase: `Salida con la IP externa` (con `outputs.tf`).
 
@@ -94,6 +99,8 @@ No changes. Your infrastructure matches the configuration.
 
 Apply complete! Resources: 0 added, 0 changed, 0 destroyed.
 ```
+
+![Idempotencia: No changes](evidencias/03-idempotencia.png)
 
 **2. Deriva** — se agrega a mano una etiqueta que el código no declara, y `terraform plan` la detecta:
 
@@ -117,6 +124,8 @@ carlosantonioav@cloudshell:~/practica2_nube (nube-2026-ii)$ terraform plan
 Plan: 0 to add, 1 to change, 0 to destroy.
 ```
 
+![Plan detectando la deriva](evidencias/03-deriva-plan.png)
+
 **3. `describe` final** — tras aceptar el `apply`, la etiqueta manual ya no está:
 
 ```
@@ -124,6 +133,8 @@ carlosantonioav@cloudshell:~/practica2_nube (nube-2026-ii)$ gcloud compute insta
 No zone specified. Using zone [us-central1-a] for instance: [web-tf].
 servidor-web
 ```
+
+![Apply que corrige la deriva y describe final](evidencias/03-deriva-describe.png)
 
 ### Fase 4 — Variables y cambio de tipo de máquina
 
@@ -144,6 +155,8 @@ or advanced_machine_features on a started instance requires stopping it. To ackn
 allow_stopping_for_update = true in your config. You can also stop it by setting desired status = "TERMINATED",
 but the instance will not be restarted after the update.
 ```
+
+![Error sin allow_stopping_for_update](evidencias/04-cambio-tipo-error.png)
 
 Tras agregar `allow_stopping_for_update = true` al recurso, el segundo intento sí completa:
 
@@ -166,6 +179,8 @@ Outputs:
 ip_externa = "34.58.53.193"
 ```
 
+![Apply completo con e2-small](evidencias/04-cambio-tipo-ok.png)
+
 Las dos IPs, una junto a la otra: la de la evidencia 2 fue `34.58.53.193`, y la de después del cambio de tipo también fue `34.58.53.193`. En este caso la IP efímera no cambió al apagar y volver a encender la máquina; nada en el código la fijó (no hay una `google_compute_address` reservada), así que esa coincidencia no está garantizada para una próxima ejecución.
 
 Commit de esta fase: `Variables y autorización para apagar la máquina` / `allow_stopping_for_update = true`.
@@ -180,6 +195,11 @@ Destroy complete! Resources: 2 destroyed.
 real    0m25.591s
 user    0m3.321s
 sys     0m0.735s
+```
+
+![time terraform destroy](evidencias/05-destroy-tiempo.png)
+
+```
 carlosantonioav@cloudshell:~/practica2_nube (nube-2026-ii)$ time terraform apply -auto-approve
 ...
 Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
@@ -193,12 +213,14 @@ user    0m2.873s
 sys     0m0.584s
 ```
 
+![time terraform apply](evidencias/05-apply-tiempo.png)
+
 Tabla de tiempos (empezada en la Práctica 1):
 
 | Cómo | Tiempo | Qué queda después |
 |---|---|---|
-| Interfaz gráfica (Práctica 1, fase 1) | _<completar con el tiempo anotado en la Práctica 1>_ | Nada. Ni siquiera la lista de clics. |
-| `gcloud` (Práctica 1, fase 5) | _<completar con el tiempo de `time` de la Práctica 1>_ | Un comando en el historial, si no se borra. |
+| Interfaz gráfica (Práctica 1, fase 1) | ~2 minutos | Nada. Ni siquiera la lista de clics. |
+| `gcloud` (Práctica 1, fase 5) | ≈ 16,177 s | Un comando en el historial, si no se borra. |
 | Terraform (hoy) | destroy: 25,591 s · apply: 19,905 s | Un repositorio que cualquiera puede clonar, leer y volver a ejecutar, con el historial de cómo llegó a ser lo que es. |
 
 ### Fase 6 — Estado remoto
@@ -229,6 +251,8 @@ google_compute_instance.web: Refreshing state...
 No changes. Your infrastructure matches the configuration.
 ```
 
+![Migración del estado al bucket](evidencias/06-estado-remoto.png)
+
 Commit de esta fase: `Estado en Cloud Storage`.
 
 ### Fase 7 — Todo destruido y proyecto vacío
@@ -243,6 +267,8 @@ carlosantonioav@cloudshell:~/practica2_nube (nube-2026-ii)$ gcloud compute addre
 Listed 0 items.
 carlosantonioav@cloudshell:~/practica2_nube (nube-2026-ii)$ gcloud compute firewall-rules list --filter="name=permitir-http"
 ```
+
+![Destroy final y las cuatro listas vacías](evidencias/07-destroy-final.png)
 
 Historial de commits, uno por fase:
 
