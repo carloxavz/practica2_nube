@@ -309,4 +309,3 @@ Eso coincide con lo que muestra el informe de facturación del día: el costo po
 
 El único recurso que sigue existiendo —y costando, aunque sea una fracción de centavo— después del `destroy` es el **bucket `tfstate-nube-2026-ii`**, con almacenamiento estándar en `us-central1` a US$0,020 por GB al mes: como el archivo de estado pesa unos pocos kilobytes, su costo mensual real es prácticamente cero, muy por debajo de un centavo. Se decidió conservarlo porque es la única fuente de verdad que conecta el código con los recursos reales que alguna vez existieron; borrarlo no ahorra nada perceptible y, en cambio, dejaría a Terraform sin forma de saber qué había que destruir la próxima vez.
 
-_Nota: estas cifras usan precios públicos de lista para `us-central1`; para la entrega final conviene confirmarlas con una corrida propia en la [calculadora de precios de Google Cloud](https://cloud.google.com/products/calculator)._
